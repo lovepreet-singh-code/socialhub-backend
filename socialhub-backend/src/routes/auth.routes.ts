@@ -32,4 +32,24 @@ router.get(
 );
 
 
+// 🔴 GitHub start
+router.get(
+  "/github",
+  passport.authenticate("github", { scope: ["user:email"] })
+);
+
+// 🔴 GitHub callback
+router.get(
+  "/github/callback",
+  passport.authenticate("github", { session: false }),
+  (req: any, res) => {
+    const token = generateToken(req.user._id.toString());
+    res.json({
+      success: true,
+      provider: "github",
+      token,
+    });
+  }
+);
+
 export default router;
