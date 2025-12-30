@@ -3,8 +3,11 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface IUser extends Document {
   name: string;
   email: string;
-  password: string;
+  password?: string; // Optional for OAuth users
   role: "USER" | "ADMIN";
+  googleId?: string;
+  githubId?: string;
+  authProvider: "LOCAL" | "GOOGLE" | "GITHUB";
 }
 
 const UserSchema = new Schema<IUser>(
@@ -22,7 +25,7 @@ const UserSchema = new Schema<IUser>(
     },
     password: {
       type: String,
-      required: true,
+      required: false, // Not required for OAuth users
       minlength: 6,
     },
     role: {
@@ -30,8 +33,20 @@ const UserSchema = new Schema<IUser>(
       enum: ["USER", "ADMIN"],
       default: "USER",
     },
+    googleId: {
+      type: String,
+    },
+    githubId: {
+      type: String,
+    },
+    authProvider: {
+      type: String,
+      enum: ["LOCAL", "GOOGLE", "GITHUB"],
+      default: "LOCAL",
+    },
   },
   { timestamps: true }
 );
+
 
 export default mongoose.model<IUser>("User", UserSchema);

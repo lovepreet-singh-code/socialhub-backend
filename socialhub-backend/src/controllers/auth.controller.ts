@@ -59,6 +59,11 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
             throw new ApiError(401, "Invalid credentials");
         }
 
+        // Check if user has a password (OAuth users don't have passwords)
+        if (!user.password) {
+            throw new ApiError(401, "Invalid credentials");
+        }
+
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             throw new ApiError(401, "Invalid credentials");
