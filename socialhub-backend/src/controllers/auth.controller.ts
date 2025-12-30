@@ -4,6 +4,7 @@ import User from "../models/User";
 import jwt from "jsonwebtoken";
 import { generateToken } from "../utils/jwt";
 import { ApiError } from "../utils/ApiError";
+import { sendNotification } from "../services/notification.service";
 
 export const register = async (
     req: Request,
@@ -70,6 +71,12 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         }
 
         const token = generateToken(user._id.toString());
+
+        // Send login notification
+        sendNotification(user._id.toString(), {
+            type: "LOGIN",
+            message: "Welcome back 👋",
+        });
 
         res.json({
             success: true,
